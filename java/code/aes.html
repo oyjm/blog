@@ -1,0 +1,240 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>AES加密</title>
+
+    <link rel="stylesheet" href="../../stylesheets/styles.css">
+    <link rel="stylesheet" href="../../stylesheets/github-dark.css">
+    <script src="j../../avascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Blog.GitHub.io</h1>
+        <p>Oliver博客</p>
+       
+      </header>
+      <section>
+        <p>欢迎访问Oliver的Blog。</p>
+      </section>
+    </div>
+	<div>
+		<h1 class="strong">AES加密解密</h1>
+		<p>
+		java代码
+
+package com.oyjm.utils;
+
+import org.apache.commons.codec.binary.Base64;
+import org.apache.log4j.LogManager;
+import org.apache.log4j.Logger;
+
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.Cipher;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.UnsupportedEncodingException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+public class AES {
+
+private static Logger log = LogManager.getLogger(AES.class.getName());
+
+private AES(){}
+
+/**
+* 解密
+*
+* @param content
+* 待解密内容
+* 解密密钥
+* @return byte[]
+*/
+public static String decrypt(String content, String key) {
+try {
+if (content == null) {
+log.error("[AES.decrypt] Content为空null");
+return null;
+}
+// 判断Key是否正确
+if (key == null) {
+log.error("[AES.decrypt] Key为空null");
+return null;
+}
+// 判断Key是否为16位
+if (key.length() != 16) {
+log.error("[AES.decrypt] Key长度不是16位");
+return null;
+}
+byte[] raw = key.getBytes("utf-8");
+SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+cipher.init(Cipher.DECRYPT_MODE, skeySpec);
+// 先用base64解密
+byte[] encrypted1 = new Base64().decode(content);
+byte[] original = cipher.doFinal(encrypted1);
+String originalString = new String(original, "utf-8");
+return originalString;
+
+} catch (UnsupportedEncodingException e) {
+log.error("[AES.decrypt] UnsupportedEncodingException ,message="+e.getMessage(),e);
+} catch (NoSuchAlgorithmException e) {
+log.error("[AES.decrypt] NoSuchAlgorithmException ,message="+e.getMessage(),e);
+} catch (NoSuchPaddingException e) {
+log.error("[AES.decrypt] NoSuchPaddingException ,message="+e.getMessage(),e);
+} catch (InvalidKeyException e) {
+log.error("[AES.decrypt] InvalidKeyException ,message="+e.getMessage(),e);
+} catch (IllegalBlockSizeException e) {
+log.error("[AES.decrypt] IllegalBlockSizeException ,message="+e.getMessage(),e);
+} catch (BadPaddingException e) {
+log.error("[AES.decrypt] BadPaddingException ,message="+e.getMessage(),e);
+}
+return null;
+}
+
+/**
+* 加密
+*
+* @param content
+* 需要加密的内容
+* 加密密钥
+* @return byte[] 加密后的字节数组
+*/
+public static String encrypt(String content, String key) {
+try {
+if (content == null) {
+log.error("[AES.ecrypt] Content为空null");
+return null;
+}
+if (key == null) {
+log.error("[AES.ecrypt] Key为空null");
+return null;
+}
+// 判断Key是否为16位
+if (key.length() != 16) {
+log.error("[AES.ecrypt] Key长度不是16位");
+return null;
+}
+byte[] raw = key.getBytes("utf-8");
+SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");
+// "算法/模式/补码方式"
+Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5Padding");
+cipher.init(Cipher.ENCRYPT_MODE, skeySpec);
+byte[] encrypted = cipher.doFinal(content.getBytes("utf-8"));
+// 此处使用BASE64做转码功能，同时能起到2次加密的作用。
+return new Base64().encodeToString(encrypted);
+
+} catch (UnsupportedEncodingException e) {
+log.error("[AES.ecrypt] UnsupportedEncodingException ,message="+e.getMessage(), e);
+} catch (NoSuchAlgorithmException e) {
+log.error("[AES.ecrypt] NoSuchAlgorithmException ,message="+e.getMessage(),e);
+} catch (NoSuchPaddingException e) {
+log.error("[AES.ecrypt] NoSuchPaddingException ,message="+e.getMessage(),e);
+} catch (InvalidKeyException e) {
+log.error("[AES.ecrypt] InvalidKeyException ,message="+e.getMessage(),e);
+} catch (IllegalBlockSizeException e) {
+log.error("[AES.ecrypt] IllegalBlockSizeException ,message="+e.getMessage(),e);
+} catch (BadPaddingException e) {
+log.error("[AES.ecrypt] BadPaddingException ,message="+e.getMessage(),e);
+}
+return null;
+}
+
+public static void main(String[] args) {
+// 需要加密的字串
+String key = "1234567890abcdef";
+String cSrc = "TLMG6PI6MGMOQDVJ你好啊eee123,76$}";
+// 加密
+String enString = AES.encrypt(cSrc,key);
+System.out.println("加密后的字串是：" + enString);
+System.out.println("加密后的字串是：" + enString.length());
+
+// 解密
+String DeString = AES.decrypt(enString,key);
+System.out.println("解密后的字串是：" + DeString);
+System.out.println("解密后的字串是：" + DeString.length());
+}
+}
+
+前端js解密
+<script src="https://sellpow-html.oss-cn-beijing.aliyuncs.com/public/js/aes.js"></script>  
+<script type="text/javascript">
+function decode(){
+var keyStr  = "mobeye.com666666";
+var content  = document.getElementById("content").value;
+var key = CryptoJS.enc.Utf8.parse(keyStr);  
+
+//加密
+//var encryptedData = CryptoJS.AES.encrypt(content, key, {  
+//        mode: CryptoJS.mode.ECB,  
+//        padding: CryptoJS.pad.Pkcs7  
+//    });  
+  
+//解密
+var decryptedData = CryptoJS.AES.decrypt(content, key, {  
+        mode: CryptoJS.mode.ECB,  
+        padding: CryptoJS.pad.Pkcs7  
+    });   
+var decryptedStr = decryptedData.toString(CryptoJS.enc.Utf8);  
+console.log("解密后:"+decryptedStr);
+}
+</script>
+
+
+配合springboot使用,返回值加密，并排除不需要加密的方法
+package com.oyjm.interceptor;
+
+import com.alibaba.fastjson.JSONObject;
+import com.oyjm.utils.AES;
+import org.springframework.core.MethodParameter;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.MediaType;
+import org.springframework.http.server.ServerHttpRequest;
+import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
+
+/**
+* Created by ouyjm on 2017/9/20.
+*/
+@Order(1)
+@ControllerAdvice(basePackages = "com.oyjm.web")
+public class MyResponseBodyAdvice implements ResponseBodyAdvice {
+@Override
+public boolean supports(MethodParameter methodParameter, Class aClass) {
+//排除不需要加密的方法
+String methodName=methodParameter.getMethod().getName();
+String[] notAESMethod = new String[]{"login"};
+for(String name : notAESMethod){
+if(name.equals(methodName)){
+return false;
+}
+}
+return true;
+}
+
+@Override
+public Object beforeBodyWrite(Object o, MethodParameter methodParameter, MediaType mediaType, Class aClass, ServerHttpRequest serverHttpRequest, ServerHttpResponse serverHttpResponse) {
+return AES.encrypt(JSONObject.toJSONString(o),"oyjm00.com666666");
+}
+} 
+		</p>
+	</div>
+    <footer>
+      <p>Project maintained by oyjm</p>
+      <p>Hosted on GitHub Pages &mdash; </p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
