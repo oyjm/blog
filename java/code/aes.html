@@ -22,11 +22,7 @@
        
       </header>
       <section>
-        <p>欢迎访问Oliver的Blog。</p>
-      </section>
-    </div>
-	<div>
-		<h1 class="strong">AES加密解密</h1>
+        <h1 class="strong">AES加密解密</h1>
 		<p>
 		java代码
 
@@ -167,8 +163,9 @@ System.out.println("解密后的字串是：" + DeString.length());
 }
 
 前端js解密
-<script src="https://sellpow-html.oss-cn-beijing.aliyuncs.com/public/js/aes.js"></script>  
-<script type="text/javascript">
+<pre>
+&lt;script src="https://sellpow-html.oss-cn-beijing.aliyuncs.com/public/js/aes.js"&gt;&lt;/script&gt;  
+&lt;script type="text/javascript"&gt;
 function decode(){
 var keyStr  = "mobeye.com666666";
 var content  = document.getElementById("content").value;
@@ -188,8 +185,8 @@ var decryptedData = CryptoJS.AES.decrypt(content, key, {
 var decryptedStr = decryptedData.toString(CryptoJS.enc.Utf8);  
 console.log("解密后:"+decryptedStr);
 }
-</script>
-
+&lt;/script&gt;
+</pre>
 
 配合springboot使用,返回值加密，并排除不需要加密的方法
 package com.oyjm.interceptor;
@@ -229,7 +226,8 @@ return AES.encrypt(JSONObject.toJSONString(o),"oyjm00.com666666");
 }
 } 
 		</p>
-	</div>
+      </section>
+    </div>
     <footer>
       <p>Project maintained by oyjm</p>
       <p>Hosted on GitHub Pages &mdash; </p>
