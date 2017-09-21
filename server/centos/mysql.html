@@ -1,0 +1,183 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>CentOS7安装MySQL5.7</title>
+
+    <link rel="stylesheet" href="../../stylesheets/styles.css">
+    <link rel="stylesheet" href="../../stylesheets/github-dark.css">
+    <script src="j../../avascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Blog.GitHub.io</h1>
+        <p>Oliver博客</p>
+       
+      </header>
+      <section>
+        <h1 class="strong">AES加密解密</h1>
+		<p>
+		前期准备
+
+安装好CentOS7系统。
+到官网（http://dev.mysql.com/downloads/mysql/）下载mysql-5.7.14-linux-glibc2.5-x86_64.tar包。
+
+安装过程
+
+1.上传文件并解压
+
+用ftp工具将tar包上传到服务器，并进入对应目录。
+
+cd /usr/soft
+解压tar包，并重命名文件夹为。
+
+tar xvf mysql-5.7.14-linux-glibc2.5-x86_64.tar
+
+tar xvfz mysql-5.7.14-linux-glibc2.5-x86_64.tar.gz
+
+mv mysql-5.7.14-linux-glibc2.5-x86_64 mysql
+2.检查用户并设置权限
+
+检查是否存在mysql用户组
+
+cat /etc/group | grep mysql
+
+不存在则创建
+
+group add mysql
+
+检查是否存在mysql用户
+
+cat /etc/passwd | grep mysql
+
+不存在则创建
+
+useradd -r -g mysql mysql
+
+设置mysql读取/usr/soft/mysql文件夹的权限
+
+chown -R mysql mysql/
+
+chgrp -R mysql mysql/
+
+检查datadir目录以及basedir目录是否存在，不存在则创建。
+
+mkdir /home/data/mysql
+3.安装
+
+执行命令
+bin/mysqld --initialize --user=mysql --basedir=/usr/soft/mysql/ --datadir=/home/data/mysql/
+
+Tips1:
+5.7后bin/mysql_install_db会报错，需要改成bin/mysqld --initialize
+Tips2：
+
+安装时会生成密码，注意记下这条日志，密码：-#hXX:?Vg9*X
+
+2016-11-10T01:33:48.150411Z 1 [Note] A temporary password is generated for root@localhost: -#hXX:?Vg9*X
+4.配置
+
+给root用户设置权限
+
+chown -R root .
+
+拷贝配置文件
+
+cp support-files/my-default.cnf /etc/my.cnf
+
+修改配置文件
+
+cd /etc
+
+vi my.cnf
+
+修改basedir datadir port属性
+
+添加到开机启动
+
+cp -a ./support-files/mysql.server  /etc/init.d/mysqld
+
+chmod +x /etc/init.d/mysqld
+
+chkconfig --add mysqld
+
+chkconfig --list mysqld
+
+登录mysql
+
+cd /usr/soft/mysql/bin
+
+./mysql -uroot -p
+
+输入上面安装时生成的密码
+
+修改密码
+
+use mysql;
+
+update user set authentication_string=PASSWORD('********') where User='root';
+
+flush privileges;
+
+修改用户可远程访问
+
+select host.user from user;
+
+update user set host='%' where user = 'root';
+
+select host.user from user;
+
+退出并重启
+
+exit;
+
+/etc/init.d/mysqld restart
+
+配置防火墙，开启配置的对应端口。
+5.安装中遇到的问题
+
+如果之前安装过，卸载了重装，必须把原来的残留数据删除干净，如data、log、mysql等文件夹。
+查询是否存在库文件
+rpm -qa | grep mysql
+
+然后用命令一个一个删除
+
+rpm -e mysql-community-common-5.7.16-1.el7.x86_64 --nodeps
+
+
+
+
+
+安装后密码忘记，不能登录
+
+先停止mysql
+
+/etc/init.d/mysqld stop
+
+再用skip-grant-tables启动mysql
+/etc/init.d/mysqld start --skip-grant-tables
+登录mysql，这时不需要密码
+./mysql -uroot -p
+修改root密码，5.7后password改为authentication_string
+update mysql.user set authentication_string=PASSWORD('********') where User='root';
+flush privileges;
+exit;
+关闭mysql后重新启动，这时再连接就可以用新密码了。
+		</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by oyjm</p>
+      <p>Hosted on GitHub Pages &mdash; </p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>

@@ -1,0 +1,85 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>CentOS7部署Tomcat8</title>
+
+    <link rel="stylesheet" href="../../stylesheets/styles.css">
+    <link rel="stylesheet" href="../../stylesheets/github-dark.css">
+    <script src="j../../avascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1>Blog.GitHub.io</h1>
+        <p>Oliver博客</p>
+       
+      </header>
+      <section>
+        <h1 class="strong">CentOS7部署Tomcat8</h1>
+		<p>
+		下载tomcat8，下载地址：http://tomcat.apache.org/download-80.cgi
+
+将压缩包上传到服务器。
+
+[root@localhost]# ll
+总用量 31312
+-rw-r--r--. 1 root root  9304958 11月 10 13:56 apache-tomcat-8.5.6.tar.gz
+1
+2
+3
+解压并重命名。 
+解压
+[root@localhost]# tar -zxv -f apache-tomcat-8.5.6.tar.gz
+    apache-tomcat-8.5.6/conf/
+    apache-tomcat-8.5.6/conf/catalina.policy
+    .......
+1
+2
+3
+4
+重命名
+
+ [root@localhost]# mv apache-tomcat-8.5.6 tomcat-services
+1
+修改端口号。
+[root@localhost tomcat-services]# cd conf 
+[root@localhost conf]# vi server.xml
+修改端口为你需要的端口号保存
+
+上传WAR包到webapps文件夹。
+[root@localhost tomcat-services]# cd webapps 
+[root@localhost webapps]# ll 
+总用量 16324 
+drwxr-x—. 14 root root 4096 11月 10 13:58 docs 
+drwxr-x—. 6 root root 78 11月 10 13:58 examples 
+drwxr-x—. 5 root root 82 11月 10 13:58 host-manager 
+-rw-r–r–. 1 root root 16705562 11月 10 14:06 hy_middle_services.war 
+drwxr-x—. 5 root root 97 11月 10 13:58 manager drwxr-x—. 
+3 root root 4096 11月 10 13:58 ROOT
+启动Tomcat。
+[root@localhost usr]# cd /usr/tomcat-services/bin
+     [root@localhost bin]# ./startup.sh 
+        Using CATALINA_BASE:   /usr/tomcat-services
+        Using CATALINA_HOME:   /usr/tomcat-services
+        Using CATALINA_TMPDIR: /usr/tomcat-services/temp
+        Using JRE_HOME:        /usr/java/jdk1.8.0_111/jre
+        Using CLASSPATH:       /usr/tomcat-services/bin/bootstrap.jar:/usr/tomcat-services/bin/tomcat-juli.jar
+        Tomcat started.
+		</p>
+      </section>
+    </div>
+    <footer>
+      <p>Project maintained by oyjm</p>
+      <p>Hosted on GitHub Pages &mdash; </p>
+    </footer>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+    
+  </body>
+</html>
